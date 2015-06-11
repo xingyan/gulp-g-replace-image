@@ -35,12 +35,11 @@ module.exports = function(opts) {
         var newPath = path.join(filesPath, str[0].md5 + path.extname(item.path));
         newCss = newCss.replace(item.path, newPath);
       } else {
-        debug.warn('CSS文件 ' + file.path + ' 中的图片 ' + item.path + ' 不存在');
+        debug.warn('文件 ' + file.path + ' 中的图片 ' + item.path + ' 不存在');
       }
     }.bind(this));
     try {
       file.contents = new Buffer(newCss);
-      this.push(file);
     } catch (err) {
       this.emit('error', new gutil.PluginError('gulp-replace-image', err));
     }
