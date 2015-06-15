@@ -29,3 +29,7 @@ node_modules
 .idea
 
 test
+
+dist
+
+test.js
