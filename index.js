@@ -1,7 +1,6 @@
 var through = require('through2'),
   gutil = require('gulp-util'),
   path = require('path'),
-  util = require('g-file'),
   scan = require('css-resources'),
   scanhtml = require('getimage'),
   isRelativeUrl = require('is-relative-url'),
@@ -29,6 +28,8 @@ module.exports = function(opts) {
       output = scan(file.contents.toString());
     } else if(ext == '.html') {
       output = scanhtml(file.contents.toString());
+    } else {
+      return cb(new gutil.PluginError('gulp-replace-image', 'File type not support'));
     }
     if(!Array.isArray(output)) {
       cb(new gutil.PluginError('gulp-replace-image', 'Scan CSS files failed'));
