@@ -3,6 +3,7 @@ var through = require('through2'),
   path = require('path'),
   util = require('g-file'),
   scan = require('css-resources'),
+  scanhtml = require('getimage'),
   isRelativeUrl = require('is-relative-url'),
   debug = require('g-debug'),
   md5Path = require('md5-image-path');
@@ -22,8 +23,13 @@ module.exports = function(opts) {
       return cb();
     }
 
-    var output = scan(file.contents.toString());
-
+    var ext = path.extname(file.path);
+    var output = null;
+    if(ext == '.css') {
+      output = scan(file.contents.toString());
+    } else if(ext == '.html') {
+      output = scanhtml(file.contents.toString());
+    }
     if(!Array.isArray(output)) {
       cb(new gutil.PluginError('gulp-replace-image', 'Scan CSS files failed'));
       return;
