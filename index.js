@@ -10,7 +10,7 @@ var through = require('through2'),
 
 module.exports = function(opts) {
 
-  var filesPath = (opts && opts.path) ?  opts.path : '../img';
+  var filesPath = (!opts || (opts.path != '' && !opts.path)) ? '../img' : opts.path;
 
   return through.obj(function(file, enc, cb) {
     if(file.isStream()) {
