@@ -1,6 +1,6 @@
 {
   "name": "gulp-replace-md5-image",
-  "version": "0.0.3",
+  "version": "0.0.7",
   "description": "replace url of css files",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "css-resources": "^0.1.2",
     "g-debug": "0.0.0",
     "g-file": "0.0.1",
-    "getimage": "0.0.0",
+    "getimage": "0.0.3",
     "gulp-util": "^3.0.5",
     "is-relative-url": "^1.0.0",
     "md5-image-path": "0.0.1",

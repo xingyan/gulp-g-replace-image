@@ -10,7 +10,7 @@ var through = require('through2'),
 
 module.exports = function(opts) {
 
-  var filesPath = (opts && opts.path) ?  opts.path : '../img';
+  var filesPath = (!opts || (opts.path != '' && !opts.path)) ? '../img' : opts.path;
 
   return through.obj(function(file, enc, cb) {
     if(file.isStream()) {
@@ -26,23 +26,22 @@ module.exports = function(opts) {
     var output = null;
     if(ext == '.css') {
       output = scan(file.contents.toString());
-    } else if(ext == '.html') {
-      output = scanhtml(file.contents.toString());
     } else {
-      return cb(new gutil.PluginError('gulp-replace-image', 'File type not support'));
+      output = scanhtml(file.contents.toString());
     }
     if(!Array.isArray(output)) {
-      cb(new gutil.PluginError('gulp-replace-image', 'Scan CSS files failed'));
+      cb(new gutil.PluginError('gulp-replace-image', 'Scan files failed'));
       return;
     }
     var newCss = file.contents.toString();
+    var basedir = (opts && opts.basedir) ? opts.basedir : null;
     output.forEach(function(item) {
-      var str = md5UrlPath(file, item);
+      var str = md5UrlPath(file, item, basedir);
       if(str && str[0] && str[0].md5) {
         var newPath = path.join(filesPath, str[0].md5 + path.extname(item.path));
         newCss = newCss.replace(item.path, newPath);
       } else {
-        debug.warn('文件 ' + file.path + ' 中的图片 ' + item.path + ' 不存在');
+        debug.warn('文件 ' + file.path + ' 中可能引用到的资源 ' + item.path + ' 不存在');
       }
     }.bind(this));
     try {
@@ -54,8 +53,14 @@ module.exports = function(opts) {
   });
 }
 
-function md5UrlPath(file, item) {
-  var str = isRelativeUrl(item.path) ? path.resolve(path.dirname(file.path), item.path) : item.path;
+function md5UrlPath(file, item, basedir) {
+  var str;
+  if(isRelativeUrl(item.path)) {
+    var _path = path.resolve(path.dirname(file.path), item.path);
+    str = (basedir == null) ?  _path : path.relative(basedir, _path);
+  } else {
+    str = item.path;
+  }
   return md5Path({
     files: str
   });
